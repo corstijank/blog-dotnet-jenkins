@@ -17,7 +17,7 @@ pipeline {
             steps{
                 // Unstash the binaries from the previous tage
                 unstash 'prod_bins'
-                sh 'docker build -t "blog-dotnet-jenkins:1.0"' .
+                sh 'docker build -t "blog-dotnet-jenkins:1.0" .'
             }
         }
     }
