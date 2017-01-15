@@ -6,6 +6,7 @@ pipeline {
             // Run this stage in a docker container with the dotnet sdk
             agent { docker 'microsoft/dotnet:latest'}
             steps{
+                git url: 'https://github.com/corstijank/blog-dotnet-jenkins.git'
                 sh 'dotnet restore'
                 sh 'dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
                 stash includes: 'publish/**', name: 'prod_bins' 
