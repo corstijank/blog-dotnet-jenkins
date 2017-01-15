@@ -8,7 +8,7 @@ pipeline {
             steps{
                 sh 'dotnet restore'
                 sh 'dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
-                stash includes: 'git stpublish/**', name: 'prod_bins' 
+                stash includes: 'publish/**', name: 'prod_bins' 
             }
         }
         stage('Create docker image'){
