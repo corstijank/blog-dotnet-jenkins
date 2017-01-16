@@ -18,8 +18,8 @@ pipeline {
             steps{
                 // Unstash the binaries from the previous tage
                 unstash 'prod_bins'
-                sh 'docker build -t "blog-dotnet-jenkins:1.0-${currentBuild.number}" .'
-                sh 'docker tag blog-dotnet-jenkins:1.0-${currentBuild.number} blog-dotnet-jenkins:latest'
+                sh """docker build -t blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} ."""
+                sh """docker tag blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} blog-dotnet-jenkins:latest""""
             }
         }
     }
