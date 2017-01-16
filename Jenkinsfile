@@ -22,9 +22,9 @@ pipeline {
                 // Unstash the binaries from the previous tage
                 unstash 'prod_bins'
                 sh "docker build -t corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} ."
-                sh "docker tag blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} corstijank/blog-dotnet-jenkins:latest"
+                sh "docker tag corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} corstijank/blog-dotnet-jenkins:latest"
                 sh "docker login -u ${DOCKER_ID_USR} -p ${DOCKER_ID_PSW}"
-                sh "docker push blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER}"
+                sh "docker push corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER}"
                 sh "docker push corstijank/blog-dotnet-jenkins:latest"
             }
         }
