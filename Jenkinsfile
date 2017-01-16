@@ -1,11 +1,13 @@
 pipeline {
     // No overall agent, rather, set up agent per stage; gives us decoupled stages
     agent none
+   
     environment{
         IMAGETAG_VERSIONED="corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER}"
         IMAGETAG_LATEST="corstijank/blog-dotnet-jenkins:latest"
     }
-    stages{
+    
+    dostages{
         stage('Build binaries'){
             // Run this stage in a docker container with the dotnet sdk
             agent { docker 'microsoft/dotnet:latest'}
@@ -30,6 +32,12 @@ pipeline {
                         docker login -u ${DOCKER_ID_USR} -p ${DOCKER_ID_PSW}
                         docker push ${IMAGETAG_VERSIONED}
                         docker push ${IMAGETAG_LATEST} """
+            }
+        }
+        stage('Run in production'){
+            agent { label 'hasDocker' }
+            steps{
+                sh "docker run -d ${IMAGETAG_LATEST}"
             }
         }
     }
