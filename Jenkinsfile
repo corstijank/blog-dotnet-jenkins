@@ -1,6 +1,10 @@
 pipeline {
     // No overall agent, rather, set up agent per stage; gives us decoupled stages
     agent none
+    environment{
+        IMAGETAG_VERSIONED="corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER}"
+        IMAGETAG_LATEST="corstijank/blog-dotnet-jenkins:latest"
+    }
     stages{
         stage('Build binaries'){
             // Run this stage in a docker container with the dotnet sdk
@@ -21,11 +25,11 @@ pipeline {
             steps{
                 // Unstash the binaries from the previous tage
                 unstash 'prod_bins'
-                sh "docker build -t corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} ."
-                sh "docker tag corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER} corstijank/blog-dotnet-jenkins:latest"
-                sh "docker login -u ${DOCKER_ID_USR} -p ${DOCKER_ID_PSW}"
-                sh "docker push corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER}"
-                sh "docker push corstijank/blog-dotnet-jenkins:latest"
+                sh """  docker build -t ${IMAGETAG_VERSIONED} .
+                        docker tag ${IMAGETAG_VERSIONED} ${IMAGETAG_LATEST}
+                        docker login -u ${DOCKER_ID_USR} -p ${DOCKER_ID_PSW}
+                        docker push ${IMAGETAG_VERSIONED}
+                        docker push ${IMAGETAG_LATEST} """
             }
         }
     }
