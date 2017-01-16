@@ -7,7 +7,7 @@ pipeline {
         IMAGETAG_LATEST="corstijank/blog-dotnet-jenkins:latest"
     }
     
-    dostages{
+    stages{
         stage('Build binaries'){
             // Run this stage in a docker container with the dotnet sdk
             agent { docker 'microsoft/dotnet:latest'}
