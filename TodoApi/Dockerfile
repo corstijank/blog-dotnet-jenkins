@@ -6,4 +6,4 @@ WORKDIR /app
 EXPOSE 5000
 # Mark as executable, and set the app as entrypoint
 RUN ["chmod", "744", "./TodoApi"] 
-ENTRYPOINT ["./TodoAp
+ENTRYPOINT ["./TodoApi"]
