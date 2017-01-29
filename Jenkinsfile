@@ -40,7 +40,7 @@ pipeline {
         stage('Run in production'){
             agent { label 'hasDocker' }
             steps{
-                sh "docker run -d -p 5000:5000 ${IMAGETAG_VERSIONED}"
+                sh "docker run -d -p 5000:5000 --name todo-api ${IMAGETAG_VERSIONED}"
             }
         }
     }
