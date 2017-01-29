@@ -3,7 +3,7 @@ pipeline {
     agent none
    
     environment{
-        IMAGETAG_VERSIONED="corstijank/blog-dotnet-jenkins:1.0-${env.BUILD_NUMBER}"
+        IMAGETAG_VERSIONED="corstijank/blog-dotnet-jenkins:2.0-${env.BUILD_NUMBER}"
         IMAGETAG_LATEST="corstijank/blog-dotnet-jenkins:latest"
     }
     
@@ -13,9 +13,11 @@ pipeline {
             agent { docker 'microsoft/dotnet:latest'}
             steps{
                 git url: 'https://github.com/corstijank/blog-dotnet-jenkins.git'
-                sh 'dotnet restore'
-                sh 'dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
-                stash includes: 'publish/**', name: 'prod_bins' 
+                dir('TodoApi'){
+                    sh 'dotnet restore'
+                    sh 'dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
+                    stash includes: 'publish/**', name: 'prod_bins' 
+                }
             }
         }
         stage('Create docker image'){
@@ -26,18 +28,20 @@ pipeline {
             }
             steps{
                 // Unstash the binaries from the previous tage
-                unstash 'prod_bins'
-                sh """  docker build -t ${IMAGETAG_VERSIONED} .
-                        docker tag ${IMAGETAG_VERSIONED} ${IMAGETAG_LATEST}
-                        docker login -u ${DOCKER_ID_USR} -p ${DOCKER_ID_PSW}
-                        docker push ${IMAGETAG_VERSIONED}
-                        docker push ${IMAGETAG_LATEST} """
+                dir('TodoApi'){
+                    unstash 'prod_bins'
+                    sh """  docker build -t ${IMAGETAG_VERSIONED} .
+                            docker tag ${IMAGETAG_VERSIONED} ${IMAGETAG_LATEST}
+                            docker login -u ${DOCKER_ID_USR} -p ${DOCKER_ID_PSW}
+                            docker push ${IMAGETAG_VERSIONED}
+                            docker push ${IMAGETAG_LATEST} """
+                }
             }
         }
         stage('Run in production'){
             agent { label 'hasDocker' }
             steps{
-                sh "docker run -d ${IMAGETAG_LATEST}"
+                sh "docker run -d -p 5000:5000 ${IMAGETAG_VERSIONED}"
             }
         }
     }
