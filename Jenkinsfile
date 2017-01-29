@@ -13,11 +13,10 @@ pipeline {
             agent { docker 'microsoft/dotnet:latest'}
             steps{
                 git url: 'https://github.com/corstijank/blog-dotnet-jenkins.git'
-                dir('TodoApi'){
-                    sh 'dotnet restore'
-                    sh 'dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
-                    stash includes: 'publish/**', name: 'prod_bins' 
-                }
+                sh 'cd TodoApi && dotnet restore'
+                sh 'cd TodoApi && dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
+                stash includes: 'TodoApi/publish/**', name: 'prod_bins' 
+                
             }
         }
         stage('Create docker image'){
