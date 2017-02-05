@@ -21,7 +21,7 @@ namespace TodoApi.Models
 
         public void Add(TodoItem item)
         {
-            item.Key = Guid.NewGuid().ToString();
+            if (item.Key == null) { item.Key = Guid.NewGuid().ToString(); }
             _todos[item.Key] = item;
         }
 
