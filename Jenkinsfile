@@ -14,10 +14,18 @@ pipeline {
             steps{
                 git url: 'https://github.com/corstijank/blog-dotnet-jenkins.git'
                 sh 'cd TodoApi && dotnet restore'
+                sh 'cd TodoApi.Test && dotnet restore'
                 sh 'cd TodoApi.Test && dotnet test -xml xunit-results.xml'
                 sh 'cd TodoApi && dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
                 stash includes: 'TodoApi/publish/**', name: 'prod_bins' 
                 
+            }
+            post{
+                always{
+                    step([$class    : 'XUnitBuilder',
+                            thresholds: [[$class: 'FailedThreshold', failedThreshold: '1']],
+                            tools     : [[$class: 'XUnitDotNetTestType', pattern: '**/xunit-results.xml']]])
+                }
             }
         }
         stage('Create docker image'){
@@ -43,7 +51,7 @@ pipeline {
             steps{
                 sh "docker stop todo-api"
                 sh "docker rm todo-api"
-                sh "docker run -d -p 5000:5000 --name todo-api ${IMAGETAG_VERSIONED}"
+                sh "git p${IMAGETAG_VERSIONED}"
             }
         }
     }
