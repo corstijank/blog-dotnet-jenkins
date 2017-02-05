@@ -18,7 +18,6 @@ pipeline {
                 sh 'cd TodoApi.Test && dotnet test -xml xunit-results.xml'
                 sh 'cd TodoApi && dotnet publish project.json -c Release -r ubuntu.14.04-x64 -o ./publish'
                 stash includes: 'TodoApi/publish/**', name: 'prod_bins' 
-                
             }
             post{
                 always{
