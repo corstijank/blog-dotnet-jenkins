@@ -50,7 +50,7 @@ pipeline {
             steps{
                 sh "docker stop todo-api"
                 sh "docker rm todo-api"
-                sh "git p${IMAGETAG_VERSIONED}"
+                sh "docker run -d -p 5000:5000 --name todo-api ${IMAGETAG_VERSIONED}"
             }
         }
     }
