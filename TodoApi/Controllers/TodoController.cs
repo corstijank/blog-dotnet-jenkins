@@ -27,7 +27,7 @@ namespace TodoApi.Controllers
         [HttpGet("{id}", Name = "GetTodo")]
         public IActionResult GetById(string id)
         {
-            var item = _dbContext.TodoItems.AsNoTracking().Single(t => t.TodoItemID == id);
+            var item = _dbContext.TodoItems.AsNoTracking().SingleOrDefault(t => t.TodoItemID == id);
             if (item == null)
             {
                 return NotFound();
@@ -55,7 +55,7 @@ namespace TodoApi.Controllers
             {
                 return BadRequest();
             }
-            TodoItem todo = _dbContext.TodoItems.Single(t => t.TodoItemID == id);
+            TodoItem todo = _dbContext.TodoItems.SingleOrDefault(t => t.TodoItemID == id);
             if (todo == null)
             {
                 return NotFound();
@@ -74,7 +74,7 @@ namespace TodoApi.Controllers
                 return BadRequest();
             }
 
-            TodoItem todo = _dbContext.TodoItems.Single(t => t.TodoItemID == id);
+            TodoItem todo = _dbContext.TodoItems.SingleOrDefault(t => t.TodoItemID == id);
             if (todo == null)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace TodoApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            TodoItem todo = _dbContext.TodoItems.Single(t => t.TodoItemID == id);
+            TodoItem todo = _dbContext.TodoItems.SingleOrDefault(t => t.TodoItemID == id);
             if (todo == null)
             {
                 return NotFound();

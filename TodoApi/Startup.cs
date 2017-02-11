@@ -32,7 +32,7 @@ namespace TodoApi
 
             services.AddSingleton<ITodoRepository, TodoRepository>();
             services.AddDbContext<TodoContext>(options =>
-                 options.UseSqlServer("Data Source=localhost,1433;Initial Catalog=Todo;Integrated Security=False;User ID=sa;Password=xihdG!8uNCavA!Rw"));
+                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
         #endregion
 
