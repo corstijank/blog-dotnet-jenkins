@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
@@ -19,16 +19,15 @@ namespace TodoApi.Controllers
         private TodoContext _dbContext;
 
         [HttpGet]
-        public async Task<IEnumerable<TodoItem>> GetAll()
+        public IEnumerable<TodoItem> GetAll()
         {
-            return await _dbContext.TodoItems.ToListAsync();
-
+            return _dbContext.TodoItems.ToList();
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
-        public async Task<IActionResult> GetById(string id)
+        public IActionResult GetById(string id)
         {
-            var item = await _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id);
+            var item = _dbContext.TodoItems.AsNoTracking().Single(t => t.TodoItemID == id);
             if (item == null)
             {
                 return NotFound();
@@ -56,8 +55,7 @@ namespace TodoApi.Controllers
             {
                 return BadRequest();
             }
-
-            TodoItem todo = _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id).GetAwaiter().GetResult();
+            TodoItem todo = _dbContext.TodoItems.Single(t => t.TodoItemID == id);
             if (todo == null)
             {
                 return NotFound();
@@ -76,7 +74,7 @@ namespace TodoApi.Controllers
                 return BadRequest();
             }
 
-            TodoItem todo = _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id).GetAwaiter().GetResult();
+            TodoItem todo = _dbContext.TodoItems.Single(t => t.TodoItemID == id);
             if (todo == null)
             {
                 return NotFound();
@@ -92,7 +90,7 @@ namespace TodoApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            TodoItem todo = _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id).GetAwaiter().GetResult();
+            TodoItem todo = _dbContext.TodoItems.Single(t => t.TodoItemID == id);
             if (todo == null)
             {
                 return NotFound();
