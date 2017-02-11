@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TodoApi.Data;
 using TodoApi.Models;
 
 namespace TodoApi.Controllers
@@ -7,31 +11,31 @@ namespace TodoApi.Controllers
     [Route("api/[controller]")]
     public class TodoController : Controller
     {
-        public TodoController(ITodoRepository todoItems)
+        public TodoController(TodoContext dbContext)
         {
-            TodoItems = todoItems;
+            _dbContext = dbContext;
         }
-        public ITodoRepository TodoItems { get; set; }
 
-        #region snippet_GetAll
+        private TodoContext _dbContext;
+
         [HttpGet]
-        public IEnumerable<TodoItem> GetAll()
+        public async Task<IEnumerable<TodoItem>> GetAll()
         {
-            return TodoItems.GetAll();
+            return await _dbContext.TodoItems.ToListAsync();
+
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
-        public IActionResult GetById(string id)
+        public async Task<IActionResult> GetById(string id)
         {
-            var item = TodoItems.Find(id);
+            var item = await _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id);
             if (item == null)
             {
                 return NotFound();
             }
             return new ObjectResult(item);
         }
-        #endregion
-        #region snippet_Create
+
         [HttpPost]
         public IActionResult Create([FromBody] TodoItem item)
         {
@@ -39,32 +43,31 @@ namespace TodoApi.Controllers
             {
                 return BadRequest();
             }
-            TodoItems.Add(item);
-            return CreatedAtRoute("GetTodo", new { id = item.Key }, item);
+            if (item.TodoItemID == null) { item.TodoItemID = Guid.NewGuid().ToString(); }
+            _dbContext.TodoItems.Add(item);
+            _dbContext.SaveChanges();
+            return CreatedAtRoute("GetTodo", new { id = item.TodoItemID }, item);
         }
-        #endregion
 
-        #region snippet_Update
         [HttpPut("{id}")]
         public IActionResult Update(string id, [FromBody] TodoItem item)
         {
-            if (item == null || item.Key != id)
+            if (item == null || item.TodoItemID != id)
             {
                 return BadRequest();
             }
 
-            var todo = TodoItems.Find(id);
+            TodoItem todo = _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id).GetAwaiter().GetResult();
             if (todo == null)
             {
                 return NotFound();
             }
 
-            TodoItems.Update(item);
+            _dbContext.Update(item);
+            _dbContext.SaveChanges();
             return new NoContentResult();
         }
-        #endregion
 
-        #region snippet_Patch
         [HttpPatch("{id}")]
         public IActionResult Update([FromBody] TodoItem item, string id)
         {
@@ -73,32 +76,31 @@ namespace TodoApi.Controllers
                 return BadRequest();
             }
 
-            var todo = TodoItems.Find(id);
+            TodoItem todo = _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id).GetAwaiter().GetResult();
             if (todo == null)
             {
                 return NotFound();
             }
 
-            item.Key = todo.Key;
+            item.TodoItemID = todo.TodoItemID;
 
-            TodoItems.Update(item);
+            _dbContext.Update(item);
+            _dbContext.SaveChanges();
             return new NoContentResult();
         }
-        #endregion
 
-        #region snippet_Delete
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            var todo = TodoItems.Find(id);
+            TodoItem todo = _dbContext.TodoItems.AsNoTracking().SingleAsync(t => t.TodoItemID == id).GetAwaiter().GetResult();
             if (todo == null)
             {
                 return NotFound();
             }
 
-            TodoItems.Remove(id);
+            _dbContext.Remove(id);
+            _dbContext.SaveChanges();
             return new NoContentResult();
         }
-        #endregion
     }
 }

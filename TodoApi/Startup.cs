@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TodoApi.Data;
 using TodoApi.Models;
 
 namespace TodoApi
@@ -29,16 +31,20 @@ namespace TodoApi
             services.AddMvc();
 
             services.AddSingleton<ITodoRepository, TodoRepository>();
+            services.AddDbContext<TodoContext>(options =>
+                 options.UseSqlServer("Data Source=localhost,1433;Initial Catalog=Todo;Integrated Security=False;User ID=sa;Password=xihdG!8uNCavA!Rw"));
         }
         #endregion
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TodoContext dbContext)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             app.UseMvc();
+
+            new DbInitializer().Initialize(dbContext);
         }
     }
 }
