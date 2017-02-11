@@ -18,7 +18,7 @@ namespace TodoApi.Models
             //Given
             _repository.Add(new TodoItem {Key="abc", Name = "Some Random Todo", IsComplete = false });
             //When
-            TodoItem foundItem = _repository.Find("abcd");
+            TodoItem foundItem = _repository.Find("abc");
             //Then
             Assert.NotNull(foundItem);
         }
