@@ -31,8 +31,8 @@
     "emitEntryPoint": true
   },
   "publishOptions": {
-    "includeFiles": [
-      "appsettings.production.json"
+    "include": [
+      "appsettings**.*"
     ]
   },
   "tools": {
