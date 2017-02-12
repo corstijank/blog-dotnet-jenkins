@@ -13,8 +13,6 @@ services:
     image: corstijank/blog-dotnet-jenkins:latest
     ports: 
       - 5000:5000
-    links: 
-      - mssql:mssql
     networks: 
       - production
     depends_on: 
