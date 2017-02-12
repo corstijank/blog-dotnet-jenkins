@@ -1,0 +1,25 @@
+version: "3.1"
+services:
+  mssql:
+    container_name: mssql
+    image: microsoft/mssql-server-linux
+    environment: 
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "xihdG!8uNCavA!Rw"
+    ports: 
+      - 1433:1433
+    networks:
+      - production
+  todo-api:
+    container_name: todo-api
+    image: corstijank/blog-dotnet-jenkins:latest
+    ports: 
+      - 5000:5000
+    links: 
+      - mssql:mssql
+    networks: 
+      - production
+    depends_on: 
+      - mssql
+networks:
+  production:

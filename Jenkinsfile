@@ -48,9 +48,9 @@ pipeline {
         stage('Run in production'){
             agent { label 'hasDocker' }
             steps{
-                sh "docker stop todo-api"
-                sh "docker rm todo-api"
-                sh "docker run -d -p 5000:5000 --name todo-api ${IMAGETAG_VERSIONED}"
+                dir('Environments/Production'){
+                    sh "docker-compose up -d"
+                }
             }
         }
     }
