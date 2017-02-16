@@ -24,27 +24,26 @@ namespace TodoApi
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        #region snippet_AddSingleton
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddMvc();
 
+            services.AddSingleton<DbInitializer,DbInitializer>();
             services.AddSingleton<ITodoRepository, TodoRepository>();
             services.AddDbContext<TodoContext>(options =>
                  options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
-        #endregion
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TodoContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TodoContext dbContext, DbInitializer dbInitializer)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             app.UseMvc();
 
-            new DbInitializer().Initialize(dbContext);
+            dbInitializer.Initialize(dbContext);
         }
     }
 }
