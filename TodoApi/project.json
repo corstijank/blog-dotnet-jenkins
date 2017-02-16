@@ -32,7 +32,7 @@
   },
   "publishOptions": {
     "include": [
-      "appsettings**.*"
+      "appsettings.docker.json"
     ]
   },
   "tools": {
