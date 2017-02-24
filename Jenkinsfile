@@ -49,10 +49,10 @@ pipeline {
             agent { label 'hasDocker' }
             steps{
                 dir('Environments/Production'){
-                    sh "sed -ie 's#corstijank/blog-dotnet-jenkins:.*#${IMAGETAG_VERSIONED}#g' docker-compose.yml"
-                    sh "docker-compose up -d"
-                    sh "git commit -am `updated to ${IMAGETAG_VERSIONED}`"
-                    sh "git push"
+                    sh """ sed -ie 's#corstijank/blog-dotnet-jenkins:.*#${IMAGETAG_VERSIONED}#g' docker-compose.yml"
+                           docker-compose up -d
+                           git commit -am "updated to ${IMAGETAG_VERSIONED}"
+                           git push """
                 }
             }
         }
