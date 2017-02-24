@@ -12,6 +12,7 @@ pipeline {
             // Run this stage in a docker container with the dotnet sdk
             agent { docker 'microsoft/dotnet:latest'}
             steps{
+                // Unable to use 'dir' directive when running steps inside a docker container agent. Known issue at jenkins.
                 git url: 'https://github.com/corstijank/blog-dotnet-jenkins.git'
                 sh 'cd TodoApi && dotnet restore'
                 sh 'cd TodoApi.Test && dotnet restore'
@@ -49,7 +50,7 @@ pipeline {
             agent { label 'hasDocker' }
             steps{
                 dir('Environments/Production'){
-                    sh """ sed -ie 's#corstijank/blog-dotnet-jenkins:.*#${IMAGETAG_VERSIONED}#g' docker-compose.yml"
+                    sh """ sed -ie 's#corstijank/blog-dotnet-jenkins:.*#${IMAGETAG_VERSIONED}#g' docker-compose.yml
                            docker-compose up -d
                            git commit -am "updated to ${IMAGETAG_VERSIONED}"
                            git push """
