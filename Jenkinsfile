@@ -49,13 +49,16 @@ pipeline {
         stage('Run in production'){
             agent { label 'hasDocker' }
             steps{
+                
                 dir('Environments/Production'){
-                    sh """ sed -ie 's#corstijank/blog-dotnet-jenkins:.*#${IMAGETAG_VERSIONED}#g' docker-compose.yml
-                           docker-compose up -d
-                           git config user.email "jenkins@staticsmustdie.net"
-                           git config user.name "Jenkins"
-                           git commit -am "updated to ${IMAGETAG_VERSIONED}"
-                           git push """
+                    sshagent(['corstijank-ssh']){
+                        sh """ sed -ie 's#corstijank/blog-dotnet-jenkins:.*#${IMAGETAG_VERSIONED}#g' docker-compose.yml
+                            docker-compose up -d
+                            git config user.email "jenkins@staticsmustdie.net"
+                            git config user.name "Jenkins"
+                            git commit -am "updated to ${IMAGETAG_VERSIONED}"
+                            git push origin master"""
+                    }
                 }
             }
         }
