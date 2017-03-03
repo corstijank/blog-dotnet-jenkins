@@ -10,7 +10,7 @@ services:
     networks:
       - production
   todo-api:
-    image: corstijank/blog-dotnet-jenkins:2.0-55
+    image: corstijank/blog-dotnet-jenkins:2.0-56
     ports: 
       - 5000:5000
     networks: 
