@@ -58,9 +58,7 @@ pipeline {
                             git config user.name "Jenkins"
                             git checkout master
                             git commit -am "updated to ${IMAGETAG_VERSIONED}"
-                            git push --delete origin production
-                            git tag -f -a production -m "Running on build ${env.BUILD_NUMBER} - See ${env.BUILD_URL}"
-                            git push --tags"""
+                            git push """
                     }
                 }
             }
