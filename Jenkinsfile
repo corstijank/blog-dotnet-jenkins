@@ -58,7 +58,7 @@ pipeline {
                             git config user.name "Jenkins"
                             git checkout master
                             git commit -am "updated to ${IMAGETAG_VERSIONED}"
-                            git push"""
+                            git push origin master"""
                     }
                 }
             }
