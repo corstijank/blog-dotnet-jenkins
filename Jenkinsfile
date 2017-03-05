@@ -10,7 +10,7 @@ pipeline {
     stages{
         stage('Build binaries'){
             // Run this stage in a docker container with the dotnet sdk
-            agent { docker 'microsoft/dotnet:latest'}
+            agent { docker 'microsoft/dotnet:1.1.0-sdk-projectjson'}
             steps{
                 // Unable to use 'dir' directive when running steps inside a docker container agent. Known issue at jenkins.
                 git url: 'https://github.com/corstijank/blog-dotnet-jenkins.git'
