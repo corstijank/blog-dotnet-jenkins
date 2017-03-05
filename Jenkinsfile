@@ -60,7 +60,7 @@ pipeline {
                             git commit -am "updated to ${IMAGETAG_VERSIONED}"
                             git tag -f -a production -m "Running on build ${env.BUILD_NUMBER} - See ${env.BUILD_URL}"
                             git push origin master
-                            git push origin production"""
+                            git push --tags"""
                     }
                 }
             }
