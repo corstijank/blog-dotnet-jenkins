@@ -57,7 +57,7 @@ pipeline {
                             git config user.email "jenkins@staticsmustdie.net"
                             git config user.name "Jenkins"
                             git commit -am "updated to ${IMAGETAG_VERSIONED}"
-                            git push origin master"""
+                            git push"""
                     }
                 }
             }
